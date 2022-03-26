@@ -47,4 +47,5 @@ workflows:
           requires:
             - cypress/install
           record: false
-          start: 'npm run test'
+          start: 'npm start'
+          command: 'npm run test'
