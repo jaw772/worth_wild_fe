@@ -1,47 +1,45 @@
 # version: 2.1
 # orbs:
-#   cypress: cypress-io/cypress@1.29.0
-  
-# workflows:
-#   start-server-and-test:
-#     jobs:
-#       - cypress/install:
-#           build: ‘npm run build’ # run a custom app build step
-#       - cypress/run:
-#           requires:
-#             - cypress/install
-#           parallel: true # split all specs across machines
-#           parallelism: 4 # use 4 CircleCI machines to finish quickly
-#           group: ‘all tests’ # name this group “all tests” on the dashboard
-#           start: ‘npm run test:e2e’ # start server before running tests
-
-# version: 2.1
-# orbs:
 #   cypress: cypress-io/cypress@1
-# workflows:
+#   node: circleci/node@4.1
+# jobs: 
 #   build:
+#     docker:
+#       - image: cimg/node:15.1
+#         auth:
+#           username: mydockerhub-user
+#           password: $DOCKERHUB_PASSWORD  #
+#     steps:
+#       - checkout
+#       - node/install-packages:
+#           pkg-manager: yarn
+#           cache-key: 'yarn.lock'
+#   test:
+#     parallelism: 1
+#     steps:
+#       - checkout
+#       - node/install-packages:
+#           pkg-manager: yarn
+#           cache-key: 'yarn.lock'
+#       - run: 
+#           name: Wait on LH
+#           command: dockerize -wait tcp://localhost:5432 -timeout 1m
+# workflows:
+#   buildAndTest:
 #     jobs:
-#       - cypress/run:
-#           start: npm run dev
-#           wait-on: 'http://localhost:3000/'
-          
+#       - build
+#       - test:
+#         - run: 
+#           name: npm tests
+#           command: npm run test:e2e
+#           requires: 
+#             - build
+
 version: 2.1
-
 orbs:
-  node: circleci/node@4.1
-
-
-jobs:
-  test:
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - checkout
-      - node/install-packages
-      - run:
-          name: Run tests
-          command: npm run test
-
+  cypress: cypress-io/cypress@1.29.0
 workflows:
+  build:
     jobs:
-      - test
+      - cypress/run
+
