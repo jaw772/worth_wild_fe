@@ -48,4 +48,4 @@ workflows:
             - cypress/install
           record: false
           start: 'npm start'
-          command: 'npm run test'
+          command: 'npm run test:e2e'
